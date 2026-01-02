@@ -1,3 +1,3 @@
 # Iot-platform
 
-사물인터넷학과 3-1학기 IoT플랫폼
+Iot-platform for 3nd-year major students

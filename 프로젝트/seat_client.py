@@ -30,6 +30,7 @@ GPIO.setup(VIBRATION_PIN, GPIO.OUT)
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye_tree_eyeglasses.xml')
 
+MIN_EYE_SIZE = 20  # [질문자님 아이디어] 눈의 최소 크기 (픽셀)
 EYE_CLOSE_THRESHOLD = 3.0  # 3초 이상 감을 시 졸음 판정
 start_time = None
 is_sleeping = False
@@ -57,21 +58,27 @@ try:
         eyes_detected = False
 
         for (x, y, w, h) in faces:
-            roi_gray = gray[y:y+h, x:x+w]
-            roi_color = frame[y:y+h, x:x+w]
+            # [개선 1] 콧구멍 및 입 주변 노이즈 방지 (얼굴의 위쪽 50%만 탐색)
+            half_h = int(h / 2)
+            roi_gray = gray[y:y+half_h, x:x+w]
+            roi_color = frame[y:y+half_h, x:x+w]
             
-            # 눈 감지 (이미지처럼 사각형 표시를 위해 튜닝)
-            eyes = eye_cascade.detectMultiScale(roi_gray, 1.1, 10)
+            # [개선 2] 파라미터 튜닝 + 질문자님의 최소 크기 조건 통합
+            # minNeighbors=10으로 깐깐하게, minSize=(20,20)으로 작은 노이즈 원천 차단
+            eyes = eye_cascade.detectMultiScale(
+                roi_gray, 
+                scaleFactor=1.1, 
+                minNeighbors=10, 
+                minSize=(MIN_EYE_SIZE, MIN_EYE_SIZE)
+            )
             
-            if len(eyes) >= 2: # 두 눈이 모두 보일 때만 open으로 간주 (더 정확한 판별)
+            # [개선 3] 두 눈이 모두 확실히 보일 때만 open으로 간주
+            if len(eyes) >= 2: 
                 eyes_detected = True
                 for (ex, ey, ew, eh) in eyes:
-                    # 이미지와 동일한 초록색 사각형 표시
                     cv2.rectangle(roi_color, (ex, ey), (ex+ew, ey+eh), (0, 255, 0), 2)
-                # 이미지와 동일한 위치에 "open" 표시
                 cv2.putText(frame, "open", (x + int(w/2) - 20, y - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             else:
-                # 눈이 안 보일 때 "close" 표시
                 cv2.putText(frame, "close", (x + int(w/2) - 20, y - 20), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
         # --- 졸음 판단 및 액션 ---

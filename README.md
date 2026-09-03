@@ -19,8 +19,7 @@
 학생 개인의 졸음 상태뿐만 아니라 **교실 전체의 집중 상태를 파악하고
 실제 환경을 자동으로 제어하는 스마트 교실**을 구현하고자 했습니다.
 
-카메라 영상에서 학생의 얼굴과 눈을 검출하고,
-눈의 상태 변화를 기반으로 졸음 여부를 판단합니다.
+OpenCV를 활용하여 카메라 영상에서 학생의 얼굴과 눈 영역을 검출하고, 눈의 상태 변화를 기반으로 졸음 여부를 판단합니다.
 
 졸음이 감지되면 해당 학생의 의자에 설치된 진동 장치를 작동시켜
 개별적으로 졸음을 깨울 수 있도록 하였으며,
@@ -143,18 +142,19 @@ Servo Motor 작동
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 
+### Computer Vision
+
+![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
+
+`Face Detection` `Eye Detection` `Image Processing`
+
 ### IoT / Embedded
 
 ![Raspberry Pi](https://img.shields.io/badge/Raspberry_Pi-A22846?style=for-the-badge&logo=raspberrypi&logoColor=white)
 
-### Computer Vision
-
-`Face Detection` `Eye Detection` `Image Processing`
-
 ### Hardware
 
 `Camera` `Vibration Motor` `Servo Motor`
-
 ---
 
 ## 📂 Repository Structure
